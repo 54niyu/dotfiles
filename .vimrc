@@ -214,7 +214,7 @@ let g:ale_lint_on_enter = 0
 " Enable integration with airline.
 let g:airline#extensions#ale#enabled = 1
 let g:ale_linters = {
-    \  'go': ["golint","go build"],
+    \  'go': ["golint","go build","go vet"],
     \  'c': ["clang","cppcheck"],
 \}
 let g:ale_change_sign_column_color = 1
@@ -222,7 +222,7 @@ hi link ALESignColumnWithErrors  None
 hi link ALESignColumnWithoutErrors  None
 
 " mapping
-nnoremap <leader>sv :source $MYVIMRC<cr>
+nnoremap <leader>sv :source ~/.vimrc<cr>
 nnoremap <leader>ev :vsplit ~/.vimrc<cr>
 nnoremap <leader>ns :nohl<CR>
 nnoremap <leader>tt :botright 10split term://zsh<cr>a
@@ -233,7 +233,7 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 " Completion Configuration
-let g:completionchosen = "coc"
+let g:completionchosen = "ncm2"
 let g:coc_start_at_startup = 0
 let g:LanguageClient_autoStart = 0
 let g:loaded_youcompleteme = 0
@@ -291,6 +291,7 @@ elseif g:completionchosen == "ncm2"
         \ }
     nnoremap <F5> :call LanguageClient_contextMenu()<CR>
     nnoremap <silent> <leader>lh :call LanguageClient#textDocument_hover()<CR>
+    nnoremap <silent> gh :call LanguageClient#textDocument_hover()<CR>
     nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
     nnoremap <silent> <leader>ld :call LanguageClient#textDocument_definition()<CR>
     nnoremap <silent> <leader>lf :call LanguageClient#textDocument_formatting()<CR>
