@@ -94,8 +94,6 @@ Plug 'solarnz/thrift.vim'
 Plug 'ybian/smartim'
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
-Plug 'zerowidth/vim-copy-as-rtf'
-"Plug 'vim-scripts/VimIM'
 
 "Theme
 Plug 'flazz/vim-colorschemes'
@@ -106,7 +104,7 @@ Plug 'flazz/vim-colorschemes'
 "Plugin 'rakr/vim-one'
 
 " completion
-Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 " assuming you're using vim-plug: https://github.com/junegunn/vim-plug
 Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
@@ -176,10 +174,6 @@ nnoremap <silent> <C-p> :Files<CR>
 nnoremap <leader>p :Files<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>a :Ag<space>
-
-"vimim
-let g:Vimim_cloud = 'baidu,sogou'
-let g:smartim_default = 'com.apple.keylayout.ABC'
 
 " vim-autoformat
 noremap <leader>f :Autoformat<CR>
@@ -294,9 +288,11 @@ elseif g:completionchosen == "ncm2"
     nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
     nnoremap <silent> <leader>ld :call LanguageClient#textDocument_definition()<CR>
     nnoremap <silent> <leader>lf :call LanguageClient#textDocument_formatting()<CR>
-else
+elseif g:completionchosen == "ycm"
     " YCM
     unlet g:loaded_youcompleteme
     let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
     nnoremap gd :YcmCompleter GoToDefinitionElseDeclaration<CR>
+else
+    echo 'no completion loaded'
 endif
