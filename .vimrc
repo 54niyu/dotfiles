@@ -73,7 +73,7 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'fatih/vim-go'
+"Plug 'fatih/vim-go'
 Plug 'Valloric/YouCompleteMe'
 "Plug 'SirVer/ultisnips'
 Plug 'scrooloose/nerdcommenter'
@@ -215,6 +215,11 @@ let g:ale_change_sign_column_color = 1
 hi link ALESignColumnWithErrors  None
 hi link ALESignColumnWithoutErrors  None
 
+function! PrototoolFormat() abort
+    silent! execute '!prototool format -w %'
+    silent! edit
+endfunction
+
 " mapping
 nnoremap <leader>sv :source ~/.vimrc<cr>
 nnoremap <leader>ev :vsplit ~/.vimrc<cr>
@@ -227,11 +232,13 @@ nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
 " Completion Configuration
-let g:completionchosen = "ncm2"
+let g:completionchosen = "coc"
 let g:coc_start_at_startup = 0
 let g:LanguageClient_autoStart = 0
 let g:loaded_youcompleteme = 0
 let g:ncm2_loaded = 0
+
+au BufWrite *.go :Autoformat
 
 if g:completionchosen == "coc" 
     " coc.nvim
@@ -256,6 +263,7 @@ if g:completionchosen == "coc"
     nmap <silent> gy <Plug>(coc-type-definition)
     nmap <silent> gi <Plug>(coc-implementation)
     nmap <silent> gr <Plug>(coc-references)
+    nmap <silent> gf :call CocAction('format')<CR>
 
     let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
     let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
