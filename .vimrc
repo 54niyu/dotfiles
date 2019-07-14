@@ -11,10 +11,10 @@ set history=500
 " Set to auto read when a file is changed from the outside
 set autoread
 " Fast saving
-nmap <leader>w :w!<cr>
-" :W sudo saves the file 
-" (useful for handling the permission-denied error)
-command W w !sudo tee % > /dev/null
+" nmap <leader>w :w!<cr>
+" " :W sudo saves the file 
+" " (useful for handling the permission-denied error)
+" command W w !sudo tee % > /dev/null
 
 set encoding=utf8
 set mouse=a
@@ -37,7 +37,6 @@ set smarttab
 set tabstop=4
 set softtabstop=4
 set shiftwidth=4
-
 set colorcolumn=80
 set hlsearch
 set showcmd 
@@ -53,6 +52,8 @@ set wrap "Wrap lines
 set ruler
 " Height of the command bar
 set cmdheight=2
+
+let g:netrw_liststyle = 3
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -74,16 +75,17 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 "Plug 'fatih/vim-go'
-Plug 'Valloric/YouCompleteMe'
+"Plug 'Valloric/YouCompleteMe'
 "Plug 'SirVer/ultisnips'
 Plug 'scrooloose/nerdcommenter'
-Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'scrooloose/nerdtree'
+"Plug 'Xuyuanp/nerdtree-git-plugin'
+"Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-vinegar'
 Plug 'luochen1990/rainbow'
 Plug 'tpope/vim-surround'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-fugitive'
-Plug 'rking/ag.vim'
+"Plug 'rking/ag.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'Chiel92/vim-autoformat'
 Plug 'w0rp/ale'
@@ -91,7 +93,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/vim-easy-align'
 Plug 'cespare/vim-toml'
 Plug 'solarnz/thrift.vim'
-Plug 'ybian/smartim'
+"Plug 'ybian/smartim'
 Plug '/usr/local/opt/fzf'
 Plug 'junegunn/fzf.vim'
 
@@ -104,19 +106,19 @@ Plug 'flazz/vim-colorschemes'
 "Plugin 'rakr/vim-one'
 
 " completion
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 " assuming you're using vim-plug: https://github.com/junegunn/vim-plug
-Plug 'autozimu/LanguageClient-neovim', {
+" Plug 'autozimu/LanguageClient-neovim', {
     \ 'branch': 'next',
     \ 'do': 'bash install.sh',
     \ }
 "Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-Plug 'ncm2/ncm2'
-Plug 'roxma/nvim-yarp'
+"Plug 'ncm2/ncm2'
+"Plug 'roxma/nvim-yarp'
 " NOTE: you need to install completion sources to get completions. Check
 " our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
-Plug 'ncm2/ncm2-bufword'
-Plug 'ncm2/ncm2-path'
+"Plug 'ncm2/ncm2-bufword'
+"Plug 'ncm2/ncm2-path'
 
 call plug#end()
 
@@ -124,35 +126,35 @@ call plug#end()
 " => Plugin Configuration
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " runtimepath
-set runtimepath^=~/.vim/plugged/ag.vim
-set runtimepath+=~/.vim/plugged/LanguageClient-neovim
+" set runtimepath^=~/.vim/plugged/ag.vim
+" set runtimepath+=~/.vim/plugged/LanguageClient-neovim
 
-"nerdtree
-"execute pathogen#infect()
-map <F2> :NERDTreeToggle<CR>
-autocmd VimEnter * NERDTree
-wincmd w
-autocmd VimEnter * wincmd w
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+" nerdtree
+" execute pathogen#infect()
+" map <F2> :NERDTreeToggle<CR>
+" autocmd VimEnter * NERDTree
+" wincmd w
+" autocmd VimEnter * wincmd w
+" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 
 
 let g:airline#extensions#tabline#enabled = 1
 " vim-go
-let g:go_def_mapping_enabled = 0
-let g:go_fmt_command = "goimports"
-let g:go_fmt_autosave = 1
-nnoremap <silent> <F7> :GoInfo<CR>
-nnoremap <leader>gn :cnext<CR>
-nnoremap <leader>gp :cprevious<CR>
-nnoremap <leader>gc :cclose<CR>
+"let g:go_def_mapping_enabled = 0
+"let g:go_fmt_command = "goimports"
+"let g:go_fmt_autosave = 1
+"nnoremap <silent> <F7> :GoInfo<CR>
+"nnoremap <leader>gn :cnext<CR>
+"nnoremap <leader>gp :cprevious<CR>
+"nnoremap <leader>gc :cclose<CR>
 "let g:go_highlight_types = 1
 "let g:go_highlight_fields = 1
 "let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
+"let g:go_highlight_methods = 1
 "let g:go_auto_type_info = 1
 "let g:go_metalinter_autosave_enabled = ['vet', 'golint']
 "let g:go_addtags_transform = 'camelcase'
-let g:go_addtags_transform = 'snakecase'
+"let g:go_addtags_transform = 'snakecase'
 
 "theme
 set background=dark
@@ -169,11 +171,12 @@ let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 " ag
 " fzf
 " The Silver Searcher
-let g:ag_working_path_mode="r"
+" let g:ag_working_path_mode="r"
 nnoremap <silent> <C-p> :Files<CR>
 nnoremap <leader>p :Files<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>a :Ag<space>
+nnoremap <leader>r :Rg<CR>
 
 " vim-autoformat
 noremap <leader>f :Autoformat<CR>
@@ -286,7 +289,7 @@ elseif g:completionchosen == "ncm2"
     "let g:deoplete#enable_at_startup = 1
     let g:LanguageClient_autoStart = 1
     let g:LanguageClient_serverCommands = {
-        \ 'go': ['bingo'],
+        \ 'go': ['gopls'],
         \ 'php': ['php', '/Users/Bing/WorkSpace/php-language-server/bin/php-language-server.php'],
         \ 'c': ['ccls'],
         \ 'cpp': ['ccls'],
