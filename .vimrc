@@ -76,8 +76,8 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'Yggdroot/indentLine'
-"Plug 'fatih/vim-go'
-"Plug 'SirVer/ultisnips'
+Plug '54niyu/vim-go'
+Plug 'SirVer/ultisnips'
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-vinegar'
 Plug 'luochen1990/rainbow'
@@ -101,7 +101,7 @@ Plug 'junegunn/fzf.vim'
 
 "Theme
 Plug 'flazz/vim-colorschemes'
-Plug 'rakr/vim-one'
+Plug 'joshdick/onedark.vim'
 
 " completion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -114,14 +114,23 @@ call plug#end()
 " runtimepath
 let g:airline#extensions#tabline#enabled = 1
 
-"""""""""" theme
+" theme
 set background=dark
-colorscheme hybrid_material
+"colorscheme gruvbox
+"colorscheme molokai 
+colorscheme onedark
 
-"""""""""" rainbow 
+" vim-go
+" let g:go_def_mapping_enabled = 0
+" let g:go_fmt_autosave = 0
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_highlight_functions=1
+"let g:go_highlight_function_calls = 1
+" rainbow 
 let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 
-"""""""""" fzf
+" fzf
 nnoremap <silent> <C-p> :Files<CR>
 nnoremap <leader>p :Files<CR>
 nnoremap <leader>b :Buffers<CR>
@@ -155,18 +164,18 @@ function! FloatingFZF()
   call nvim_open_win(buf, v:true, opts)
 endfunction
 
-"""""""" vim-autoformat
+" vim-autoformat
 let g:formatdef_autopep8 = "'autopep8 - --range '.a:firstline.' '.a:lastline"
 let g:formatters_python = ['autopep8']
 noremap <leader>f :Autoformat<CR>
 au BufWrite *.py,*.go :Autoformat
 
-"""""""" floaterm
+" floaterm
 noremap  <silent> <F7>           :FloatermToggle<CR>i
 noremap! <silent> <F7>           <Esc>:FloatermToggle<CR>i
 tnoremap <silent> <F7>           <C-\><C-n>:FloatermToggle<CR>
 
-"""""""""" easy-align
+" easy-align
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
 
@@ -175,9 +184,9 @@ let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 
 " snipper
-"let g:UltiSnipsExpandTrigger="<c-j>"
-"let g:UltiSnipsJumpForwardTrigger="<c-b>"
-"let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+let g:UltiSnipsExpandTrigger="<c-j>"
+let g:UltiSnipsJumpForwardTrigger="<c-b>"
+let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 "ale
 " Error and warning signs.
@@ -201,8 +210,8 @@ let g:airline#extensions#tabline#enabled = 1
 "    \  'proto': ['prototool lint'],
 "\}
 "let g:ale_change_sign_column_color = 1
-"hi link ALESignColumnWithErrors  None
-"hi link ALESignColumnWithoutErrors  None
+hi link ALESignColumnWithErrors  None
+hi link ALESignColumnWithoutErrors  None
 
 " prototool
 function! PrototoolFormat() abort
