@@ -6,7 +6,7 @@ if [ ! -f "/etc/apt/sources.list.bak" ]; then
 echo 'back up sources.list'
 sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak
 echo 'replace sources'
-sudo cat <<"EOF" > /etc/apt/sources.list 
+cat <<"EOF" > /tmp/sources.list
 
 deb http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
 deb-src http://mirrors.aliyun.com/ubuntu/ bionic main restricted universe multiverse
@@ -21,6 +21,8 @@ deb-src http://mirrors.aliyun.com/ubuntu/ bionic-proposed main restricted univer
 
 EOF
 
+sudo cp /tmp/sources.list /etc/apt/sources.list
+
 # apt update
 sudo add-apt-repository ppa:neovim-ppa/stable
 sudo apt update -y
@@ -33,7 +35,7 @@ sudo apt install curl -y
 # zsh
 sudo apt install zsh -y
 if [ ! -d "${HOME}/.oh-my-zsh" ]; then
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+echo y | sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 fi 
 
 # tmux neovim  
