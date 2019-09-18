@@ -15,7 +15,6 @@ set autoread
 " " :W sudo saves the file 
 " " (useful for handling the permission-denied error)
 " command W w !sudo tee % > /dev/null
-
 set encoding=utf8
 set mouse=a
 set number
@@ -53,7 +52,9 @@ set ruler
 " Height of the command bar
 set cmdheight=2
 
-let g:netrw_liststyle = 3
+set list lcs=tab:\|\ 
+let g:netrw_liststyle=3
+let g:netrw_fastbrowse=0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -74,51 +75,36 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
+Plug 'Yggdroot/indentLine'
 "Plug 'fatih/vim-go'
-"Plug 'Valloric/YouCompleteMe'
 "Plug 'SirVer/ultisnips'
 Plug 'scrooloose/nerdcommenter'
-"Plug 'Xuyuanp/nerdtree-git-plugin'
-"Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-vinegar'
 Plug 'luochen1990/rainbow'
 Plug 'tpope/vim-surround'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'tpope/vim-fugitive'
-"Plug 'rking/ag.vim'
 Plug 'jiangmiao/auto-pairs'
 Plug 'Chiel92/vim-autoformat'
-Plug 'w0rp/ale'
 Plug 'airblade/vim-gitgutter'
 Plug 'junegunn/vim-easy-align'
 Plug 'cespare/vim-toml'
 Plug 'solarnz/thrift.vim'
-"Plug 'ybian/smartim'
-Plug '/usr/local/opt/fzf'
+Plug 'voldikss/vim-floaterm'
+if has('unix')
+    Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
+elseif has('mac')
+    Plug '/usr/local/opt/fzf'
+endif
+
 Plug 'junegunn/fzf.vim'
 
 "Theme
 Plug 'flazz/vim-colorschemes'
-"Plugin 'dracula/vim'
-"Plugin 'jdkanani/vim-material-theme'
-"Plugin 'morhetz/gruvbox'
-"Plugin 'joshdick/onedark.vim'
-"Plugin 'rakr/vim-one'
+Plug 'rakr/vim-one'
 
 " completion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-" assuming you're using vim-plug: https://github.com/junegunn/vim-plug
-" Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
-"Plug 'ncm2/ncm2'
-"Plug 'roxma/nvim-yarp'
-" NOTE: you need to install completion sources to get completions. Check
-" our wiki page for a list of sources: https://github.com/ncm2/ncm2/wiki
-"Plug 'ncm2/ncm2-bufword'
-"Plug 'ncm2/ncm2-path'
 
 call plug#end()
 
@@ -126,66 +112,65 @@ call plug#end()
 " => Plugin Configuration
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " runtimepath
-" set runtimepath^=~/.vim/plugged/ag.vim
-" set runtimepath+=~/.vim/plugged/LanguageClient-neovim
-
-" nerdtree
-" execute pathogen#infect()
-" map <F2> :NERDTreeToggle<CR>
-" autocmd VimEnter * NERDTree
-" wincmd w
-" autocmd VimEnter * wincmd w
-" autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-
-
 let g:airline#extensions#tabline#enabled = 1
-" vim-go
-"let g:go_def_mapping_enabled = 0
-"let g:go_fmt_command = "goimports"
-"let g:go_fmt_autosave = 1
-"nnoremap <silent> <F7> :GoInfo<CR>
-"nnoremap <leader>gn :cnext<CR>
-"nnoremap <leader>gp :cprevious<CR>
-"nnoremap <leader>gc :cclose<CR>
-"let g:go_highlight_types = 1
-"let g:go_highlight_fields = 1
-"let g:go_highlight_functions = 1
-"let g:go_highlight_methods = 1
-"let g:go_auto_type_info = 1
-"let g:go_metalinter_autosave_enabled = ['vet', 'golint']
-"let g:go_addtags_transform = 'camelcase'
-"let g:go_addtags_transform = 'snakecase'
 
-"theme
+"""""""""" theme
 set background=dark
-colorscheme gruvbox
-"set background=light
-"colorscheme solarized
-"colorscheme hybrid_material
-"colorscheme onedark
-"colorscheme dracula
+colorscheme hybrid_material
 
-" rainbow 
+"""""""""" rainbow 
 let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 
-" ag
-" fzf
-" The Silver Searcher
-" let g:ag_working_path_mode="r"
+"""""""""" fzf
 nnoremap <silent> <C-p> :Files<CR>
 nnoremap <leader>p :Files<CR>
 nnoremap <leader>b :Buffers<CR>
-nnoremap <leader>a :Ag<space>
+nnoremap <leader>a :Ag<CR>
 nnoremap <leader>r :Rg<CR>
+" Reverse the layout to make the FZF list top-down
+let $FZF_DEFAULT_OPTS='--layout=reverse'
+" Using the custom window creation function
+let g:fzf_layout = { 'window': 'call FloatingFZF()' }
+" Function to create the custom floating window
+function! FloatingFZF()
+  " creates a scratch, unlisted, new, empty, unnamed buffer
+  " to be used in the floating window
+  let buf = nvim_create_buf(v:false, v:true)
+  " 90% of the height
+  let height = float2nr(&lines * 0.9)
+  " 60% of the height
+  let width = float2nr(&columns * 0.6)
+  " horizontal position (centralized)
+  let horizontal = float2nr((&columns - width) / 2)
+  " vertical position (one line down of the top)
+  let vertical = 1
+  let opts = {
+        \ 'relative': 'editor',
+        \ 'row': vertical,
+        \ 'col': horizontal,
+        \ 'width': width,
+        \ 'height': height
+        \ }
+  " open the new window, floating, and enter to it
+  call nvim_open_win(buf, v:true, opts)
+endfunction
 
-" vim-autoformat
+"""""""" vim-autoformat
+let g:formatdef_autopep8 = "'autopep8 - --range '.a:firstline.' '.a:lastline"
+let g:formatters_python = ['autopep8']
 noremap <leader>f :Autoformat<CR>
+au BufWrite *.py,*.go :Autoformat
 
-" easy-align
+"""""""" floaterm
+noremap  <silent> <F7>           :FloatermToggle<CR>i
+noremap! <silent> <F7>           <Esc>:FloatermToggle<CR>i
+tnoremap <silent> <F7>           <C-\><C-n>:FloatermToggle<CR>
+
+"""""""""" easy-align
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
 
-" airline
+"""""""""" airline
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 
@@ -196,28 +181,30 @@ let g:airline#extensions#tabline#enabled = 1
 
 "ale
 " Error and warning signs.
-let g:ale_enabled = 1
-" let g:ale_linters_explicit = 1
-let g:ale_set_highlights = 0
-let g:ale_completion_delay = 500
-let g:ale_echo_delay = 20
-let g:ale_lint_delay = 500
-let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-let g:ale_sign_error = 'x'
-let g:ale_sign_warning = 'o'
-let g:ale_lint_on_text_changed = 'normal'
-let g:ale_lint_on_insert_leave = 1
-let g:ale_lint_on_enter = 0
-" Enable integration with airline.
-let g:airline#extensions#ale#enabled = 1
-let g:ale_linters = {
-    \  'go': ["golint","go build","go vet"],
-    \  'c': ["clang","cppcheck"],
-\}
-let g:ale_change_sign_column_color = 1
-hi link ALESignColumnWithErrors  None
-hi link ALESignColumnWithoutErrors  None
+"let g:ale_enabled = 1
+"let g:ale_linters_explicit = 1
+"let g:ale_set_highlights = 0
+"let g:ale_completion_delay = 500
+"let g:ale_echo_delay = 20
+"let g:ale_lint_delay = 500
+"let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+"let g:ale_sign_error = 'x'
+"let g:ale_sign_warning = 'o'
+"let g:ale_lint_on_text_changed = 'normal'
+"let g:ale_lint_on_insert_leave = 1
+"let g:ale_lint_on_enter = 0
+"" Enable integration with airline.
+"let g:airline#extensions#ale#enabled = 1
+"let g:ale_linters = {
+"    \  'go': ["golint","go build","go vet"],
+"    \  'c': ["clang","cppcheck"],
+"    \  'proto': ['prototool lint'],
+"\}
+"let g:ale_change_sign_column_color = 1
+"hi link ALESignColumnWithErrors  None
+"hi link ALESignColumnWithoutErrors  None
 
+" prototool
 function! PrototoolFormat() abort
     silent! execute '!prototool format -w %'
     silent! edit
@@ -240,8 +227,6 @@ let g:coc_start_at_startup = 0
 let g:LanguageClient_autoStart = 0
 let g:loaded_youcompleteme = 0
 let g:ncm2_loaded = 0
-
-au BufWrite *.go :Autoformat
 
 if g:completionchosen == "coc" 
     " coc.nvim
@@ -289,10 +274,7 @@ elseif g:completionchosen == "ncm2"
     "let g:deoplete#enable_at_startup = 1
     let g:LanguageClient_autoStart = 1
     let g:LanguageClient_serverCommands = {
-        \ 'go': ['gopls'],
-        \ 'php': ['php', '/Users/Bing/WorkSpace/php-language-server/bin/php-language-server.php'],
-        \ 'c': ['ccls'],
-        \ 'cpp': ['ccls'],
+        \ 'go': ['gopls']
         \ }
     nnoremap <F5> :call LanguageClient_contextMenu()<CR>
     nnoremap <silent> <leader>lh :call LanguageClient#textDocument_hover()<CR>
@@ -308,3 +290,5 @@ elseif g:completionchosen == "ycm"
 else
     echo 'no completion loaded'
 endif
+
+"let $NVIM_COC_LOG_LEVEL = 'debug'
