@@ -75,9 +75,9 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-Plug 'Yggdroot/indentLine'
+"Plug 'Yggdroot/indentLine'
 Plug '54niyu/vim-go'
-Plug 'SirVer/ultisnips'
+"Plug 'SirVer/ultisnips'
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-vinegar'
 Plug 'luochen1990/rainbow'
@@ -168,7 +168,9 @@ endfunction
 let g:formatdef_autopep8 = "'autopep8 - --range '.a:firstline.' '.a:lastline"
 let g:formatters_python = ['autopep8']
 noremap <leader>f :Autoformat<CR>
-au BufWrite *.py,*.go :Autoformat
+"au BufWrite *.py,*.go :Autoformat
+autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+
 
 " floaterm
 noremap  <silent> <F7>           :FloatermToggle<CR>i
@@ -254,6 +256,8 @@ if g:completionchosen == "coc"
 		let col = col('.') - 1
 		return !col || getline('.')[col - 1]  =~# '\s'
 	endfunction
+
+    inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
     " Remap keys for gotos
     nmap <silent> gd <Plug>(coc-definition)
