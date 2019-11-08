@@ -52,7 +52,7 @@ set ruler
 " Height of the command bar
 set cmdheight=2
 
-set list lcs=tab:\|\ 
+"set list lcs=tab:\|\ 
 let g:netrw_liststyle=3
 let g:netrw_fastbrowse=0
 
@@ -168,14 +168,13 @@ endfunction
 let g:formatdef_autopep8 = "'autopep8 - --range '.a:firstline.' '.a:lastline"
 let g:formatters_python = ['autopep8']
 noremap <leader>f :Autoformat<CR>
-"au BufWrite *.py,*.go :Autoformat
+au BufWrite *.py :Autoformat
 autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
 
-
 " floaterm
-noremap  <silent> <F7>           :FloatermToggle<CR>i
-noremap! <silent> <F7>           <Esc>:FloatermToggle<CR>i
-tnoremap <silent> <F7>           <C-\><C-n>:FloatermToggle<CR>
+noremap  <silent> <leader>tt     :FloatermToggle<CR>i
+noremap! <silent> <leader>tt     <Esc>:FloatermToggle<CR>i
+tnoremap <silent> <leader>tt     <C-\><C-n>:FloatermToggle<CR>
 
 " easy-align
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -217,7 +216,7 @@ hi link ALESignColumnWithoutErrors  None
 
 " prototool
 function! PrototoolFormat() abort
-    silent! execute '!prototool format -w %'
+    silent! execute '!prototool format --debug -w %'
     silent! edit
 endfunction
 
@@ -225,8 +224,8 @@ endfunction
 nnoremap <leader>sv :source ~/.vimrc<cr>
 nnoremap <leader>ev :vsplit ~/.vimrc<cr>
 nnoremap <leader>ns :nohl<CR>
-nnoremap <leader>tt :botright 10split term://zsh<cr>a
-nnoremap <leader>nt :tabnew term://zsh<cr>a
+" nnoremap <leader>tt :botright 10split term://zsh<cr>a
+" nnoremap <leader>nt :tabnew term://zsh<cr>a
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
