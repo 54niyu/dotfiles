@@ -12,7 +12,7 @@ set history=500
 set autoread
 " Fast saving
 " nmap <leader>w :w!<cr>
-" " :W sudo saves the file 
+" " :W sudo saves the file
 " " (useful for handling the permission-denied error)
 " command W w !sudo tee % > /dev/null
 set encoding=utf8
@@ -38,11 +38,11 @@ set softtabstop=4
 set shiftwidth=4
 set colorcolumn=80
 set hlsearch
-set showcmd 
+set showcmd
 set ignorecase "检索时忽略大小写
 set smartcase
 set clipboard=unnamed
-set lazyredraw 
+set lazyredraw
 set cindent
 set ai "Auto indent
 set si "Smart indent
@@ -52,7 +52,7 @@ set ruler
 " Height of the command bar
 set cmdheight=2
 
-"set list lcs=tab:\|\ 
+"set list lcs=tab:\|\
 let g:netrw_liststyle=3
 let g:netrw_fastbrowse=0
 
@@ -117,7 +117,7 @@ let g:airline#extensions#tabline#enabled = 1
 " theme
 set background=dark
 "colorscheme gruvbox
-"colorscheme molokai 
+"colorscheme molokai
 colorscheme onedark
 
 " vim-go
@@ -127,7 +127,7 @@ let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_functions=1
 "let g:go_highlight_function_calls = 1
-" rainbow 
+" rainbow
 let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 
 " fzf
@@ -142,26 +142,26 @@ let $FZF_DEFAULT_OPTS='--layout=reverse'
 let g:fzf_layout = { 'window': 'call FloatingFZF()' }
 " Function to create the custom floating window
 function! FloatingFZF()
-  " creates a scratch, unlisted, new, empty, unnamed buffer
-  " to be used in the floating window
-  let buf = nvim_create_buf(v:false, v:true)
-  " 90% of the height
-  let height = float2nr(&lines * 0.9)
-  " 60% of the height
-  let width = float2nr(&columns * 0.6)
-  " horizontal position (centralized)
-  let horizontal = float2nr((&columns - width) / 2)
-  " vertical position (one line down of the top)
-  let vertical = 1
-  let opts = {
-        \ 'relative': 'editor',
-        \ 'row': vertical,
-        \ 'col': horizontal,
-        \ 'width': width,
-        \ 'height': height
-        \ }
-  " open the new window, floating, and enter to it
-  call nvim_open_win(buf, v:true, opts)
+    " creates a scratch, unlisted, new, empty, unnamed buffer
+    " to be used in the floating window
+    let buf = nvim_create_buf(v:false, v:true)
+    " 90% of the height
+    let height = float2nr(&lines * 0.9)
+    " 60% of the height
+    let width = float2nr(&columns * 0.6)
+    " horizontal position (centralized)
+    let horizontal = float2nr((&columns - width) / 2)
+    " vertical position (one line down of the top)
+    let vertical = 1
+    let opts = {
+                \ 'relative': 'editor',
+                \ 'row': vertical,
+                \ 'col': horizontal,
+                \ 'width': width,
+                \ 'height': height
+                \ }
+    " open the new window, floating, and enter to it
+    call nvim_open_win(buf, v:true, opts)
 endfunction
 
 " vim-autoformat
@@ -169,11 +169,15 @@ let g:formatdef_autopep8 = "'autopep8 - --range '.a:firstline.' '.a:lastline"
 let g:formatters_python = ['autopep8']
 noremap <leader>f :Autoformat<CR>
 au BufWrite *.py :Autoformat
-autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
+
+" go auto format
+" Use `:Format` to format current buffer
+command! -nargs=0 GoFormat :call CocAction('format')
+autocmd BufWritePre *.go :GoFormat
 
 " floaterm
-noremap  <silent> <leader>tt     :FloatermToggle<CR>i
-noremap! <silent> <leader>tt     <Esc>:FloatermToggle<CR>i
+noremap  <silent> <leader>tt     :FloatermToggle<CR>
+noremap! <silent> <leader>tt     <Esc>:FloatermToggle<CR>
 tnoremap <silent> <leader>tt     <C-\><C-n>:FloatermToggle<CR>
 
 " easy-align
@@ -238,23 +242,23 @@ let g:LanguageClient_autoStart = 0
 let g:loaded_youcompleteme = 0
 let g:ncm2_loaded = 0
 
-if g:completionchosen == "coc" 
+if g:completionchosen == "coc"
     " coc.nvim
-    let g:coc_start_at_startup = 1 
-	" Smaller updatetime for CursorHold & CursorHoldI
-	set updatetime=300
+    let g:coc_start_at_startup = 1
+    " Smaller updatetime for CursorHold & CursorHoldI
+    set updatetime=300
     " Use tab for trigger completion with characters ahead and navigate.
     " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
     inoremap <silent><expr> <TAB>
-          \ pumvisible() ? "\<C-n>" :
-          \ <SID>check_back_space() ? "\<TAB>" :
-          \ coc#refresh()
+                \ pumvisible() ? "\<C-n>" :
+                \ <SID>check_back_space() ? "\<TAB>" :
+                \ coc#refresh()
     inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-	function! s:check_back_space() abort
-		let col = col('.') - 1
-		return !col || getline('.')[col - 1]  =~# '\s'
-	endfunction
+    function! s:check_back_space() abort
+        let col = col('.') - 1
+        return !col || getline('.')[col - 1]  =~# '\s'
+    endfunction
 
     inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
@@ -286,8 +290,8 @@ elseif g:completionchosen == "ncm2"
     "let g:deoplete#enable_at_startup = 1
     let g:LanguageClient_autoStart = 1
     let g:LanguageClient_serverCommands = {
-        \ 'go': ['gopls']
-        \ }
+                \ 'go': ['gopls']
+                \ }
     nnoremap <F5> :call LanguageClient_contextMenu()<CR>
     nnoremap <silent> <leader>lh :call LanguageClient#textDocument_hover()<CR>
     nnoremap <silent> gh :call LanguageClient#textDocument_hover()<CR>
