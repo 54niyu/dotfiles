@@ -76,8 +76,10 @@ call plug#begin('~/.vim/plugged')
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 "Plug 'Yggdroot/indentLine'
-Plug '54niyu/vim-go'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+"Plug '54niyu/vim-go'
 "Plug 'SirVer/ultisnips'
+Plug 'honza/vim-snippets'
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-vinegar'
 Plug 'luochen1990/rainbow'
@@ -121,8 +123,8 @@ set background=dark
 colorscheme onedark
 
 " vim-go
-" let g:go_def_mapping_enabled = 0
-" let g:go_fmt_autosave = 0
+let g:go_def_mapping_enabled = 0
+let g:go_fmt_autosave = 1
 let g:go_highlight_types = 1
 let g:go_highlight_fields = 1
 let g:go_highlight_functions=1
@@ -168,12 +170,10 @@ endfunction
 let g:formatdef_autopep8 = "'autopep8 - --range '.a:firstline.' '.a:lastline"
 let g:formatters_python = ['autopep8']
 noremap <leader>f :Autoformat<CR>
-au BufWrite *.py :Autoformat
+"au BufWrite *.go,*.py :Autoformat
 
 " go auto format
-" Use `:Format` to format current buffer
-command! -nargs=0 GoFormat :call CocAction('format')
-autocmd BufWritePre *.go :GoFormat
+autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " floaterm
 noremap  <silent> <leader>tt     :FloatermToggle<CR>
@@ -189,9 +189,9 @@ let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 
 " snipper
-let g:UltiSnipsExpandTrigger="<c-j>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+" let g:UltiSnipsExpandTrigger="<c-j>"
+" let g:UltiSnipsJumpForwardTrigger="<c-b>"
+" let g:UltiSnipsJumpBackwardTrigger="<c-z>"
 
 "ale
 " Error and warning signs.
@@ -308,3 +308,32 @@ else
 endif
 
 "let $NVIM_COC_LOG_LEVEL = 'debug'
+"
+"
+" Use <C-l> for trigger snippet expand.
+imap <C-l> <Plug>(coc-snippets-expand)
+
+" Use <C-j> for select text for visual placeholder of snippet.
+vmap <C-j> <Plug>(coc-snippets-select)
+
+" Use <C-j> for jump to next placeholder, it's default of coc.nvim
+let g:coc_snippet_next = '<c-j>'
+
+" Use <C-k> for jump to previous placeholder, it's default of coc.nvim
+let g:coc_snippet_prev = '<c-k>'
+
+" Use <C-j> for both expand and jump (make expand higher priority.)
+imap <C-j> <Plug>(coc-snippets-expand-jump)
+
+inoremap <silent><expr> <TAB>
+            \ pumvisible() ? coc#_select_confirm() :
+            \ coc#expandableOrJumpable() ? "\<C-r>=coc#rpc#request('doKeymap', ['snippets-expand-jump',''])\<CR>" :
+            \ <SID>check_back_space() ? "\<TAB>" :
+            \ coc#refresh()
+
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+let g:coc_snippet_next = '<tab>'
