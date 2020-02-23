@@ -14,7 +14,8 @@ set autoread
 " nmap <leader>w :w!<cr>
 " " :W sudo saves the file
 " " (useful for handling the permission-denied error)
-" command W w !sudo tee % > /dev/null
+command W w !sudo tee % > /dev/null
+
 set encoding=utf8
 set mouse=a
 set number
@@ -24,6 +25,7 @@ set relativenumber
 set so=7
 " Turn on the Wild menu
 set wildmenu
+set maxmempattern=10000
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, tab and indent related
@@ -75,11 +77,10 @@ call plug#begin('~/.vim/plugged')
 
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-"Plug 'Yggdroot/indentLine'
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-"Plug '54niyu/vim-go'
-"Plug 'SirVer/ultisnips'
 Plug 'honza/vim-snippets'
+Plug 'uber/prototool', { 'rtp':'vim/prototool' }
+Plug 'dense-analysis/ale'
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-vinegar'
 Plug 'luochen1990/rainbow'
@@ -98,13 +99,10 @@ if has('unix')
 elseif has('mac')
     Plug '/usr/local/opt/fzf'
 endif
-
 Plug 'junegunn/fzf.vim'
-
 "Theme
 Plug 'flazz/vim-colorschemes'
 Plug 'joshdick/onedark.vim'
-
 " completion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
@@ -113,7 +111,6 @@ call plug#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Plugin Configuration
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" runtimepath
 let g:airline#extensions#tabline#enabled = 1
 
 " theme
@@ -124,11 +121,12 @@ colorscheme onedark
 
 " vim-go
 let g:go_def_mapping_enabled = 0
-let g:go_fmt_autosave = 1
-let g:go_highlight_types = 1
-let g:go_highlight_fields = 1
-let g:go_highlight_functions=1
+"let g:go_fmt_autosave = 1
+"let g:go_highlight_types = 1
+"let g:go_highlight_fields = 1
+"let g:go_highlight_functions=1
 "let g:go_highlight_function_calls = 1
+
 " rainbow
 let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 
@@ -172,7 +170,7 @@ let g:formatters_python = ['autopep8']
 noremap <leader>f :Autoformat<CR>
 "au BufWrite *.go,*.py :Autoformat
 
-" go auto format
+" coc.nvim go format
 autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " floaterm
@@ -195,34 +193,27 @@ let g:airline#extensions#tabline#enabled = 1
 
 "ale
 " Error and warning signs.
-"let g:ale_enabled = 1
-"let g:ale_linters_explicit = 1
-"let g:ale_set_highlights = 0
-"let g:ale_completion_delay = 500
-"let g:ale_echo_delay = 20
-"let g:ale_lint_delay = 500
-"let g:ale_echo_msg_format = '[%linter%] %code: %%s'
-"let g:ale_sign_error = 'x'
-"let g:ale_sign_warning = 'o'
-"let g:ale_lint_on_text_changed = 'normal'
-"let g:ale_lint_on_insert_leave = 1
-"let g:ale_lint_on_enter = 0
-"" Enable integration with airline.
-"let g:airline#extensions#ale#enabled = 1
-"let g:ale_linters = {
-"    \  'go': ["golint","go build","go vet"],
-"    \  'c': ["clang","cppcheck"],
-"    \  'proto': ['prototool lint'],
-"\}
-"let g:ale_change_sign_column_color = 1
+let g:ale_enabled = 1
+let g:ale_linters_explicit = 1
+let g:ale_set_highlights = 0
+let g:ale_completion_delay = 500
+let g:ale_echo_delay = 20
+let g:ale_lint_delay = 500
+let g:ale_echo_msg_format = '[%linter%] %code: %%s'
+let g:ale_sign_error = 'x'
+let g:ale_sign_warning = 'o'
+let g:ale_lint_on_text_changed = 'normal'
+let g:ale_lint_on_insert_leave = 1
+let g:ale_lint_on_enter = 0
+" Enable integration with airline.
+let g:airline#extensions#ale#enabled = 1
+let g:ale_linters = {
+            \  'go': ["golint","go build","go vet"],
+            \  'proto': ["prototool-lint"],
+            \}
+let g:ale_change_sign_column_color = 1
 hi link ALESignColumnWithErrors  None
 hi link ALESignColumnWithoutErrors  None
-
-" prototool
-function! PrototoolFormat() abort
-    silent! execute '!prototool format --debug -w %'
-    silent! edit
-endfunction
 
 " mapping
 nnoremap <leader>sv :source ~/.vimrc<cr>
@@ -235,80 +226,37 @@ nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
 nnoremap <C-l> <C-w>l
 
-" Completion Configuration
-let g:completionchosen = "coc"
-let g:coc_start_at_startup = 0
-let g:LanguageClient_autoStart = 0
-let g:loaded_youcompleteme = 0
-let g:ncm2_loaded = 0
+" Completion coc.nvim
+" Smaller updatetime for CursorHold & CursorHoldI
+set updatetime=300
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+            \ pumvisible() ? "\<C-n>" :
+            \ <SID>check_back_space() ? "\<TAB>" :
+            \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
 
-if g:completionchosen == "coc"
-    " coc.nvim
-    let g:coc_start_at_startup = 1
-    " Smaller updatetime for CursorHold & CursorHoldI
-    set updatetime=300
-    " Use tab for trigger completion with characters ahead and navigate.
-    " Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
-    inoremap <silent><expr> <TAB>
-                \ pumvisible() ? "\<C-n>" :
-                \ <SID>check_back_space() ? "\<TAB>" :
-                \ coc#refresh()
-    inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+function! s:check_back_space() abort
+    let col = col('.') - 1
+    return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
-    function! s:check_back_space() abort
-        let col = col('.') - 1
-        return !col || getline('.')[col - 1]  =~# '\s'
-    endfunction
+inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 
-    inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gf :call CocAction('format')<CR>
+nnoremap <leader>ls :<C-u>CocList outline<cr>
+nnoremap <leader>lt :<C-u>CocList diagnostics<cr>
 
-    " Remap keys for gotos
-    nmap <silent> gd <Plug>(coc-definition)
-    nmap <silent> gy <Plug>(coc-type-definition)
-    nmap <silent> gi <Plug>(coc-implementation)
-    nmap <silent> gr <Plug>(coc-references)
-    nmap <silent> gf :call CocAction('format')<CR>
-
-    let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
-    let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
-
-elseif g:completionchosen == "ncm2"
-
-    "let g:ncm2_loaded = 1
-    " enable ncm2 for all buffers
-    autocmd BufEnter * call ncm2#enable_for_buffer()
-    " IMPORTANT: :help Ncm2PopupOpen for more information
-    set completeopt=noinsert,menuone,noselect
-    " When the <Enter> key is pressed while the popup menu is visible, it only
-    " hides the menu. Use this mapping to close the menu and also start a new
-    " line.
-    inoremap <expr> <CR> (pumvisible() ? "\<c-y>\<cr>" : "\<CR>")
-    " Use <TAB> to select the popup menu:
-    inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
-    inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-    "let g:deoplete#enable_at_startup = 1
-    let g:LanguageClient_autoStart = 1
-    let g:LanguageClient_serverCommands = {
-                \ 'go': ['gopls']
-                \ }
-    nnoremap <F5> :call LanguageClient_contextMenu()<CR>
-    nnoremap <silent> <leader>lh :call LanguageClient#textDocument_hover()<CR>
-    nnoremap <silent> gh :call LanguageClient#textDocument_hover()<CR>
-    nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
-    nnoremap <silent> <leader>ld :call LanguageClient#textDocument_definition()<CR>
-    nnoremap <silent> <leader>lf :call LanguageClient#textDocument_formatting()<CR>
-elseif g:completionchosen == "ycm"
-    " YCM
-    unlet g:loaded_youcompleteme
-    let g:ycm_global_ycm_extra_conf = '~/.ycm_extra_conf.py'
-    nnoremap gd :YcmCompleter GoToDefinitionElseDeclaration<CR>
-else
-    echo 'no completion loaded'
-endif
+let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
+let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
 
 "let $NVIM_COC_LOG_LEVEL = 'debug'
-"
 "
 " Use <C-l> for trigger snippet expand.
 imap <C-l> <Plug>(coc-snippets-expand)
