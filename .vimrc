@@ -94,6 +94,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'cespare/vim-toml'
 Plug 'solarnz/thrift.vim'
 Plug 'voldikss/vim-floaterm'
+Plug 'diepm/vim-rest-console'
 if has('unix')
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
 elseif has('mac')
@@ -137,6 +138,7 @@ nnoremap <leader>p :Files<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>a :Ag<CR>
 nnoremap <leader>r :Rg<CR>
+
 " Reverse the layout to make the FZF list top-down
 let $FZF_DEFAULT_OPTS='--layout=reverse'
 " Using the custom window creation function
@@ -253,6 +255,9 @@ nmap <silent> gr <Plug>(coc-references)
 nmap <silent> gf :call CocAction('format')<CR>
 nnoremap <leader>ls :<C-u>CocList outline<cr>
 nnoremap <leader>lt :<C-u>CocList diagnostics<cr>
+
+" Symbol renaming.
+nmap <leader>rn <Plug>(coc-rename)
 
 let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
 let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
