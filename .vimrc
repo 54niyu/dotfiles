@@ -122,8 +122,8 @@ let g:airline#extensions#tabline#enabled = 1
 " theme
 set background=dark
 colorscheme gruvbox
-hi Normal ctermbg=none
-hi NonText ctermbg=none
+"hi Normal ctermbg=none
+"hi NonText ctermbg=none
 "colorscheme molokai
 "colorscheme onedark
 
@@ -145,6 +145,21 @@ nnoremap <leader>p :Files<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>a :Ag<CR>
 nnoremap <leader>r :Rg<CR>
+nnoremap <leader>j :cn<CR>
+nnoremap <leader>k :cp<CR>
+
+" An action can be a reference to a function that processes selected lines
+function! s:build_quickfix_list(lines)
+  call setqflist(map(copy(a:lines), '{ "filename": v:val }'))
+  copen
+  cc
+endfunction
+
+let g:fzf_action = {
+  \ 'ctrl-q': function('s:build_quickfix_list'),
+  \ 'ctrl-t': 'tab split',
+  \ 'ctrl-x': 'split',
+  \ 'ctrl-v': 'vsplit' }
 
 " Reverse the layout to make the FZF list top-down
 let $FZF_DEFAULT_OPTS='--layout=reverse'
@@ -177,7 +192,7 @@ function! FloatingFZF()
     call nvim_win_set_option(win, 'winhl', 'Normal:NvimFloatingWindow')
 endfunction
 
-" vim-autoformat
+"vim-autoformat
 let g:formatdef_autopep8 = "'autopep8 - --range '.a:firstline.' '.a:lastline"
 let g:formatters_python = ['autopep8']
 noremap <leader>f :Autoformat<CR>
