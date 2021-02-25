@@ -11,21 +11,23 @@ set history=500
 " Set to auto read when a file is changed from the outside
 set autoread
 " Fast saving
-" nmap <leader>w :w!<cr>
+nmap <leader>w :w!<cr>
 " " :W sudo saves the file
 " " (useful for handling the permission-denied error)
-command W w !sudo tee % > /dev/null
+"command W w !sudo tee % > /dev/null
 
 set encoding=utf8
 set mouse=a
 set number
 set relativenumber
+set cursorline
 
 " Set 7 lines to the cursor - when moving vertically using j/k
 set so=7
 " Turn on the Wild menu
 set wildmenu
 set maxmempattern=10000
+let mapleader = "\<space>"
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Text, tab and indent related
@@ -42,8 +44,8 @@ set colorcolumn=80
 set hlsearch
 set showcmd
 set ignorecase "检索时忽略大小写
+set clipboard^=unnamed,unnamedplus
 set smartcase
-set clipboard=unnamed
 set lazyredraw
 set cindent
 set ai "Auto indent
@@ -53,10 +55,6 @@ set wrap "Wrap lines
 set ruler
 " Height of the command bar
 set cmdheight=2
-
-"set list lcs=tab:\|\
-let g:netrw_liststyle=3
-let g:netrw_fastbrowse=0
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => Files, backups and undo
@@ -106,6 +104,7 @@ Plug 'flazz/vim-colorschemes'
 Plug 'joshdick/onedark.vim'
 " completion
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'posva/vim-vue'
 
 if has('nvim')
   Plug 'Shougo/defx.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -122,15 +121,16 @@ let g:airline#extensions#tabline#enabled = 1
 " theme
 set background=dark
 colorscheme gruvbox
-"hi Normal ctermbg=none
-"hi NonText ctermbg=none
+hi Normal ctermbg=none
+hi NonText ctermbg=none
 "colorscheme molokai
 "colorscheme onedark
 
 " vim-go
 let g:go_gopls_enabled = 0
 let g:go_def_mapping_enabled = 0
-"let g:go_fmt_autosave = 1
+let g:go_fmt_autosave = 1
+let g:go_fmt_command = "goimports"
 "let g:go_highlight_types = 1
 "let g:go_highlight_fields = 1
 "let g:go_highlight_functions=1
@@ -140,7 +140,6 @@ let g:go_def_mapping_enabled = 0
 let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 
 " fzf
-nnoremap <silent> <C-p> :Files<CR>
 nnoremap <leader>p :Files<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>a :Ag<CR>
@@ -161,50 +160,11 @@ let g:fzf_action = {
   \ 'ctrl-x': 'split',
   \ 'ctrl-v': 'vsplit' }
 
-" Reverse the layout to make the FZF list top-down
-let $FZF_DEFAULT_OPTS='--layout=reverse'
-" Using the custom window creation function
-let g:fzf_layout = { 'window': 'call FloatingFZF()' }
-" Function to create the custom floating window
-function! FloatingFZF()
-    " creates a scratch, unlisted, new, empty, unnamed buffer
-    " to be used in the floating window
-    let buf = nvim_create_buf(v:false, v:true)
-    " 90% of the height
-    let height = float2nr(&lines * 0.9)
-    " 60% of the height
-    let width = float2nr(&columns * 0.6)
-    " horizontal position (centralized)
-    let horizontal = float2nr((&columns - width) / 2)
-    " vertical position (one line down of the top)
-    let vertical = 1
-    let opts = {
-                \ 'relative': 'editor',
-                \ 'row': vertical,
-                \ 'col': horizontal,
-                \ 'width': width,
-                \ 'height': height
-                \ }
-    " open the new window, floating, and enter to it
-    let win = nvim_open_win(buf, v:true, opts)
-    " call nvim_win_set_option(win, 'winhl', 'Normal:gruvbox')
-    hi def NvimFloatingWindow ctermbg=none
-    call nvim_win_set_option(win, 'winhl', 'Normal:NvimFloatingWindow')
-endfunction
-
-"vim-autoformat
-let g:formatdef_autopep8 = "'autopep8 - --range '.a:firstline.' '.a:lastline"
-let g:formatters_python = ['autopep8']
-noremap <leader>f :Autoformat<CR>
-"au BufWrite *.go,*.py :Autoformat
-
-" coc.nvim go format
-autocmd BufWritePre *.go :call CocAction('runCommand', 'editor.action.organizeImport')
 
 " floaterm
-noremap  <silent> <leader>tt     :FloatermToggle<CR>
-noremap! <silent> <leader>tt     <Esc>:FloatermToggle<CR>
-tnoremap <silent> <leader>tt     <C-\><C-n>:FloatermToggle<CR>
+noremap  <silent> <leader>tt   :FloatermToggle<CR>
+noremap! <silent> <leader>tt   <Esc>:FloatermToggle<CR>
+tnoremap <silent> <leader>tt   <C-\><C-n>:FloatermToggle<CR>
 
 " easy-align
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -214,13 +174,9 @@ xmap ga <Plug>(EasyAlign)
 let g:airline#extensions#ale#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 
-" snipper
-" let g:UltiSnipsExpandTrigger="<c-j>"
-" let g:UltiSnipsJumpForwardTrigger="<c-b>"
-" let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-
 "ale
 " Error and warning signs.
+autocmd BufEnter *.proto ALEDisable
 let g:ale_enabled = 1
 let g:ale_linters_explicit = 1
 let g:ale_set_highlights = 0
@@ -236,8 +192,7 @@ let g:ale_lint_on_enter = 0
 " Enable integration with airline.
 let g:airline#extensions#ale#enabled = 1
 let g:ale_linters = {
-            \  'go': ["golint","go build","go vet"],
-            \  'proto': ["prototool-lint"],
+            \  'go': ["golint", "go vet", "errcheck"],
             \}
 let g:ale_change_sign_column_color = 1
 hi link ALESignColumnWithErrors  None
@@ -247,8 +202,6 @@ hi link ALESignColumnWithoutErrors  None
 nnoremap <leader>sv :source ~/.vimrc<cr>
 nnoremap <leader>ev :vsplit ~/.vimrc<cr>
 nnoremap <leader>ns :nohl<CR>
-" nnoremap <leader>tt :botright 10split term://zsh<cr>a
-" nnoremap <leader>nt :tabnew term://zsh<cr>a
 nnoremap <C-h> <C-w>h
 nnoremap <C-j> <C-w>j
 nnoremap <C-k> <C-w>k
@@ -277,12 +230,12 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
-nmap <silent> gf :call CocAction('format')<CR>
-nnoremap <leader>ls :<C-u>CocList outline<cr>
-nnoremap <leader>lt :<C-u>CocList diagnostics<cr>
+nmap <silent> cf :call CocAction('format')<CR>
+nnoremap <leader>cs :<C-u>CocList outline<cr>
+nnoremap <leader>ct :<C-u>CocList diagnostics<cr>
 
 " Symbol renaming.
-nmap <leader>rn <Plug>(coc-rename)
+nmap <leader>crn <Plug>(coc-rename)
 
 let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
 let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
@@ -328,7 +281,7 @@ call defx#custom#option('_', {
       \ 'resume': 1
       \ })
 
-nmap <silent> <Leader>e :Defx <cr>
+nmap <silent> <Leader>fe :Defx <cr>
 
 autocmd FileType defx call s:defx_my_settings()
 function! s:defx_my_settings() abort
