@@ -80,7 +80,6 @@ Plug 'honza/vim-snippets'
 Plug 'uber/prototool', { 'rtp':'vim/prototool' }
 Plug 'dense-analysis/ale'
 Plug 'scrooloose/nerdcommenter'
-Plug 'tpope/vim-vinegar'
 Plug 'luochen1990/rainbow'
 Plug 'tpope/vim-surround'
 Plug 'terryma/vim-multiple-cursors'
@@ -92,6 +91,7 @@ Plug 'junegunn/vim-easy-align'
 Plug 'cespare/vim-toml'
 Plug 'solarnz/thrift.vim'
 Plug 'voldikss/vim-floaterm'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'diepm/vim-rest-console'
 if has('unix')
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
@@ -140,7 +140,7 @@ let g:go_fmt_command = "goimports"
 let g:rainbow_active = 1 "0 if you want to enable it later via :RainbowToggle
 
 " fzf
-nnoremap <leader>p :Files<CR>
+nnoremap <leader><Space> :Files<CR>
 nnoremap <leader>b :Buffers<CR>
 nnoremap <leader>a :Ag<CR>
 nnoremap <leader>r :Rg<CR>
@@ -178,6 +178,7 @@ let g:airline#extensions#tabline#enabled = 1
 " Error and warning signs.
 autocmd BufEnter *.proto ALEDisable
 let g:ale_enabled = 1
+let g:ale_disable_lsp = 1
 let g:ale_linters_explicit = 1
 let g:ale_set_highlights = 0
 let g:ale_completion_delay = 500
