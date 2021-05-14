@@ -117,6 +117,12 @@ Plug 'rafamadriz/friendly-snippets'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
 
+Plug 'simrat39/symbols-outline.nvim'
+
+" Vim Script
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'folke/trouble.nvim'
+
 
 call plug#end()
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -135,7 +141,7 @@ hi NonText ctermbg=none
 " vim-go
 let g:go_gopls_enabled = 0
 let g:go_def_mapping_enabled = 0
-let g:go_fmt_autosave = 1
+let g:go_fmt_autosave = 0
 let g:go_fmt_command = "goimports"
 "let g:go_highlight_types = 1
 "let g:go_highlight_fields = 1
@@ -183,7 +189,7 @@ let g:airline#extensions#tabline#enabled = 1
 "ale
 " Error and warning signs.
 autocmd BufEnter *.proto ALEDisable
-let g:ale_enabled = 1
+let g:ale_enabled = 0
 let g:ale_disable_lsp = 1
 let g:ale_linters_explicit = 1
 let g:ale_set_highlights = 0
@@ -422,6 +428,8 @@ for _, lsp in ipairs(servers) do
   nvim_lsp[lsp].setup { 
    on_attach = on_attach,
    capabilities = capabilities,
+   settings = {gopls = {analyses = {unusedparams = true}, staticcheck = true}},
+   init_options = {usePlaceholders = true, completeUnimported = true},
 }
 end
 
@@ -480,3 +488,39 @@ xmap        s   <Plug>(vsnip-select-text)
 nmap        S   <Plug>(vsnip-cut-text)
 xmap        S   <Plug>(vsnip-cut-text)
 
+lua << EOF
+  require("trouble").setup {
+    -- your configuration comes here
+    -- or leave it empty to use the default settings
+    -- refer to the configuration section below
+  }
+EOF
+
+lua << EOF
+
+local configs = require 'lspconfig/configs'
+local util = require 'lspconfig/util'
+
+configs.protobuf = {
+  default_config = {
+    cmd = {"protocol-buffers-language-server"};
+    filetypes = {"protobuf","proto"};
+    root_dir = util.root_pattern("./");
+  };
+  -- on_new_config = function(new_config) end;
+  -- on_attach = function(client, bufnr) end;
+  docs = {
+    description = [[
+https://github.com/golang/tools/tree/master/gopls
+
+Google's lsp server for golang.
+]];
+    default_config = {
+      root_dir = [[root_pattern("go.mod", ".git")]];
+    };
+  };
+}
+-- vim:et ts=2 sw=2
+
+configs.protobuf.setup{}
+EOF
